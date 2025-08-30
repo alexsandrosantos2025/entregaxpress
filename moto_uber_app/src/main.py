@@ -43,5 +43,8 @@ def serve(path):
             return "index.html not found", 404
 
 
+@app.route("/test_api")
+def test_api():
+    return "API de teste funcionando!", 200
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
