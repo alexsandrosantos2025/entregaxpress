@@ -9,7 +9,8 @@ from src.models.user import db
 from src.models.ride import Ride  # Importar modelo Ride
 from src.routes.user import user_bp
 from src.routes.ride import ride_bp
-
+from src.routes.admin import admin_bp
+app.register_blueprint(admin_bp)
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.config['SECRET_KEY'] = 'asdf#FGSgvasgf$5$WGT'
 
@@ -44,6 +45,5 @@ def serve(path):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)from src.routes.admin import admin_bp
-app.register_blueprint(admin_bp)
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
