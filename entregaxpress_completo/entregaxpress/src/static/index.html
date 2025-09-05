@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoUber - Cliente</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .app-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px 20px;
+        }
+
+        .step {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .location-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            cursor: pointer;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .status-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 24px;
+        }
+
+        .moto-info {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .moto-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .moto-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .moto-details span {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .rating {
+            color: #ffc107;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e9ecef;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background: #667eea;
+            transform: scale(1.2);
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            margin-bottom: 20px;
+            border: 2px dashed #dee2e6;
+        }
+
+        @media (max-width: 480px) {
+            .app-container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>🏍️ MotoUber</h1>
+            <p>Entrega rápida e segura</p>
+        </div>
+
+        <div class="content">
+            <!-- Indicador de Passos -->
+            <div class="step-indicator">
+                <div class="step-dot active" id="dot-1"></div>
+                <div class="step-dot" id="dot-2"></div>
+                <div class="step-dot" id="dot-3"></div>
+                <div class="step-dot" id="dot-4"></div>
+            </div>
+
+            <!-- Passo 1: Informações da Entrega -->
+            <div class="step active" id="step-1">
+                <h2 style="margin-bottom: 20px; color: #333;">📦 Detalhes da Entrega</h2>
+                
+                <div class="form-group">
+                    <label for="origem">📍 Endereço de Origem</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="origem" placeholder="De onde vamos buscar?">
+                        <span class="location-icon" onclick="getLocation('origem')">📍</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="destino">🎯 Endereço de Destino</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="destino" placeholder="Para onde vamos entregar?">
+                        <span class="location-icon" onclick="getLocation('destino')">📍</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="descricao">📝 Descrição do Item</label>
+                    <input type="text" id="descricao" placeholder="O que será entregue?">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefone">📱 Seu Telefone</label>
+                    <input type="tel" id="telefone" placeholder="(11) 99999-9999">
+                </div>
+
+                <button class="btn btn-primary" onclick="nextStep(2)">
+                    Continuar ➡️
+                </button>
+            </div>
+
+            <!-- Passo 2: Confirmação -->
+            <div class="step" id="step-2">
+                <h2 style="margin-bottom: 20px; color: #333;">✅ Confirmar Pedido</h2>
+                
+                <div class="status-card">
+                    <div id="resumo-pedido">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                </div>
+
+                <div class="map-placeholder">
+                    <div id="map-container" style="width: 100%; height: 100%; border-radius: 15px; overflow: hidden;">
+                        <div id="simple-map" style="width: 100%; height: 100%; background: linear-gradient(45deg, #e3f2fd, #bbdefb); display: flex; align-items: center; justify-content: center; position: relative;">
+                            <div style="position: absolute; top: 10px; left: 10px; background: white; padding: 5px 10px; border-radius: 15px; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                📍 Origem
+                            </div>
+                            <div style="position: absolute; bottom: 10px; right: 10px; background: white; padding: 5px 10px; border-radius: 15px; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                🎯 Destino
+                            </div>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 10px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                🗺️ Rota Simulada<br>
+                                <small style="color: #666;">3.2 km • 15 min</small>
+                            </div>
+                            <!-- Linha da rota simulada -->
+                            <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                                <path d="M 30 30 Q 150 80 270 170" stroke="#ff6b6b" stroke-width="3" fill="none" stroke-dasharray="5,5">
+                                    <animate attributeName="stroke-dashoffset" values="0;-10" dur="1s" repeatCount="indefinite"/>
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="confirmarPedido()">
+                    🚀 Solicitar Motoboy
+                </button>
+                <button class="btn btn-secondary" onclick="previousStep(1)">
+                    ⬅️ Voltar
+                </button>
+            </div>
+
+            <!-- Passo 3: Procurando Motoboy -->
+            <div class="step" id="step-3">
+                <h2 style="margin-bottom: 20px; color: #333;">🔍 Procurando Motoboy</h2>
+                
+                <div class="status-card">
+                    <div class="status-icon">
+                        <div class="spinner">🔄</div>
+                    </div>
+                    <h3>Buscando motoboy disponível...</h3>
+                    <p>Aguarde alguns instantes</p>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="search-progress"></div>
+                </div>
+
+                <button class="btn btn-secondary" onclick="cancelarBusca()">
+                    ❌ Cancelar
+                </button>
+            </div>
+
+            <!-- Passo 4: Motoboy Encontrado -->
+            <div class="step" id="step-4">
+                <h2 style="margin-bottom: 20px; color: #333;">🎉 Motoboy Encontrado!</h2>
+                
+                <div class="moto-info">
+                    <h3>🏍️ Carlos Silva</h3>
+                    <div class="moto-details">
+                        <span>Honda CG 160</span>
+                        <span class="rating">⭐ 4.8 (127 avaliações)</span>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span>📱 (11) 98765-4321</span>
+                    </div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-icon">⏱️</div>
+                    <h3>Tempo estimado: 15-20 min</h3>
+                    <p>O motoboy está a caminho do local de coleta</p>
+                </div>
+
+                <div class="map-placeholder">
+                    <div id="tracking-map" style="width: 100%; height: 100%; border-radius: 15px; overflow: hidden;">
+                        <div style="width: 100%; height: 100%; background: linear-gradient(45deg, #e8f5e8, #c8e6c9); display: flex; align-items: center; justify-content: center; position: relative;">
+                            <div style="position: absolute; top: 15px; left: 15px; background: white; padding: 5px 10px; border-radius: 15px; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                📍 Você está aqui
+                            </div>
+                            <div style="position: absolute; bottom: 15px; right: 15px; background: white; padding: 5px 10px; border-radius: 15px; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                🎯 Destino
+                            </div>
+                            <!-- Motoboy em movimento -->
+                            <div id="motoboy-marker" style="position: absolute; top: 40%; left: 30%; background: #27ae60; color: white; padding: 8px; border-radius: 50%; font-size: 16px; box-shadow: 0 3px 10px rgba(0,0,0,0.2); animation: moveToDestination 10s linear infinite;">
+                                🏍️
+                            </div>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 10px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
+                                📍 Acompanhamento<br>
+                                <small style="color: #666;">Tempo real</small>
+                            </div>
+                            <!-- Rota do motoboy -->
+                            <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                                <path d="M 60 80 Q 150 100 240 140" stroke="#27ae60" stroke-width="3" fill="none" stroke-dasharray="8,4">
+                                    <animate attributeName="stroke-dashoffset" values="0;-12" dur="1.5s" repeatCount="indefinite"/>
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="acompanharEntrega()">
+                    📍 Acompanhar Entrega
+                </button>
+                <button class="btn btn-secondary" onclick="ligarMotoboy()">
+                    📞 Ligar para o Motoboy
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+
+        function nextStep(step) {
+            if (step === 2) {
+                // Validar campos obrigatórios
+                const origem = document.getElementById('origem').value;
+                const destino = document.getElementById('destino').value;
+                const telefone = document.getElementById('telefone').value;
+
+                if (!origem || !destino || !telefone) {
+                    alert('Por favor, preencha todos os campos obrigatórios!');
+                    return;
+                }
+
+                // Preencher resumo do pedido
+                const resumo = document.getElementById('resumo-pedido');
+                resumo.innerHTML = `
+                    <strong>📍 Origem:</strong> ${origem}<br>
+                    <strong>🎯 Destino:</strong> ${destino}<br>
+                    <strong>📝 Item:</strong> ${document.getElementById('descricao').value || 'Não informado'}<br>
+                    <strong>📱 Telefone:</strong> ${telefone}<br>
+                    <strong>💰 Valor estimado:</strong> R$ 12,50
+                `;
+            }
+
+            showStep(step);
+        }
+
+        function previousStep(step) {
+            showStep(step);
+        }
+
+        function showStep(step) {
+            // Esconder todos os passos
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.step-dot').forEach(d => d.classList.remove('active'));
+
+            // Mostrar passo atual
+            document.getElementById(`step-${step}`).classList.add('active');
+            document.getElementById(`dot-${step}`).classList.add('active');
+
+            currentStep = step;
+        }
+
+        function confirmarPedido() {
+            showStep(3);
+            
+            // Simular busca por motoboy
+            let progress = 0;
+            const progressBar = document.getElementById('search-progress');
+            
+            const searchInterval = setInterval(() => {
+                progress += 20;
+                progressBar.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(searchInterval);
+                    setTimeout(() => {
+                        showStep(4);
+                    }, 1000);
+                }
+            }, 800);
+        }
+
+        function cancelarBusca() {
+            showStep(1);
+        }
+
+        function getLocation(field) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // Simular endereço baseado na localização
+                    const enderecos = [
+                        "Rua das Flores, 123 - Centro",
+                        "Av. Paulista, 456 - Bela Vista",
+                        "Rua Augusta, 789 - Consolação"
+                    ];
+                    const endereco = enderecos[Math.floor(Math.random() * enderecos.length)];
+                    document.getElementById(field).value = endereco;
+                }, function() {
+                    alert('Não foi possível obter sua localização');
+                });
+            } else {
+                alert('Geolocalização não é suportada neste navegador');
+            }
+        }
+
+        function acompanharEntrega() {
+            alert('🚀 Funcionalidade de acompanhamento em tempo real será implementada!');
+        }
+
+        function ligarMotoboy() {
+            alert('📞 Ligando para o motoboy...');
+        }
+
+        // Adicionar animação de rotação ao spinner
+        const style = document.createElement('style');
+        style.textContent = `
+            .spinner {
+                animation: spin 2s linear infinite;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
+
+
+        
+        /* Animação do motoboy se movendo */
+        @keyframes moveToDestination {
+            0% { top: 40%; left: 30%; }
+            25% { top: 35%; left: 45%; }
+            50% { top: 45%; left: 60%; }
+            75% { top: 40%; left: 75%; }
+            100% { top: 35%; left: 85%; }
+        }
+
